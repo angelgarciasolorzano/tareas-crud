@@ -5,7 +5,6 @@ export const conexionDB = async () => {
     await sequelize.authenticate();
     return "Conexion a la base de datos establecida correctamente";
   } catch (error) {
-    console.log(error);
     return "Error en la conexión a la base de datos"
   }
 }

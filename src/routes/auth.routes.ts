@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validarDatos } from "../middleware/validacion.datos";
-import { usuarioSchema } from "../schemas/usuario.schemas";
+import { LoginSchema, RegisterSchema } from "../schemas/auth.schemas";
 import { 
   registrarUsuario, 
   loginUsuario, 
@@ -9,9 +9,9 @@ import {
 
 const router = Router();
 
-router.post("/login", validarDatos(usuarioSchema), loginUsuario);
+router.post("/login", validarDatos(LoginSchema), loginUsuario);
 
-router.post("/register",  validarDatos(usuarioSchema), registrarUsuario);
+router.post("/register",  validarDatos(RegisterSchema), registrarUsuario);
 
 router.post("/logout", cerrarSesion);
 

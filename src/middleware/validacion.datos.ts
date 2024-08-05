@@ -1,14 +1,16 @@
-import { Request, Response, NextFunction } from "express"
-import { ZodSchema, ZodError } from "zod";
+import { Request, Response, NextFunction } from "express";
+import { ValidationError } from "yup";
+import { formatoError } from "../lib/formatoError.lib";
+import { SchemaType } from "../schemas/auth.schemas";
 
-export const validarDatos = (schema: ZodSchema) => (request: Request, response: Response, next: NextFunction) => {
+export const validarDatos = <T extends object>(schema: SchemaType<T>) => async (request: Request, response: Response, next: NextFunction) => {
   try {
-    schema.parse(request.body);
+    await schema.validate(request.body, { abortEarly: false });
     next();
   } catch (error) {
-    const respuesta = error as ZodError;
-    console.log(respuesta.errors.map(error => error.message));
+    const errores = error as ValidationError;
+    const formato = formatoError(errores);
 
-    response.status(400).json(respuesta.errors.map(error => error.message));
+    response.status(400).json({ errors: formato });
   }
 };

@@ -10,6 +10,10 @@ Usuarios.init(
       primaryKey: true,
       autoIncrement: true
     },
+    nombre_Usuario: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     correo_Usuario: {
       type: DataTypes.STRING,
       allowNull: false,

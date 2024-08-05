@@ -1,13 +1,14 @@
-import { createContext, useState, ReactNode, FC, useContext, useEffect } from "react";
-import { loginUsuario } from "../api/usuarios.api";
+import { createContext, useState, FC, useContext } from "react";
+import { loginUsuario, registrarUsuario } from "../api/auth.api";
 import { Usuario } from "../types/usuario.types";
-
-type AuthProviderProps = {
-  children: ReactNode;
-};
+import { ProviderProps } from "../types/props.types"; 
+import { LoginTypeSchema, RegisterTypeSchema } from "../schemas/authSchema";
+import { AxiosError } from "axios";
+import { RespuestaBackend } from "../types/mensajes.types";
 
 interface AuthContextProps {
-  login: (usuario: Usuario) => Promise<void>;
+  login: (usuario: LoginTypeSchema) => Promise<void>;
+  registrar: (usuario: RegisterTypeSchema) => Promise<void>;
   usuario: Usuario | null;
   isAutenticado: boolean;
   mensajesBackend: string | null;
@@ -24,33 +25,42 @@ export const useAuth = () => {
   return context;
 }
 
-export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: FC<ProviderProps> = ({ children }) => {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [isAutenticado, setIsAutenticado] = useState<boolean>(false);
   const [mensajesBackend, setMensajesBackend] = useState<string | null>(null);
 
-  const login = async (usuario: Usuario) => {
+  const login = async (usuario: LoginTypeSchema): Promise<void> => {
     try {
       const res = await loginUsuario(usuario);
 
       setUsuario(res.data);
       setIsAutenticado(true);
+      
       setMensajesBackend(null);
-    } catch (error: any) {
-      console.log(error.response.data);
-      setMensajesBackend(error.response.data.message || "");
+    } catch (error) {
+      const respuesta = error as AxiosError<RespuestaBackend>;
+      const mensaje = respuesta.response?.data.message || 'Ocurrio un error';
+
+      setMensajesBackend(mensaje);
     }
   };
 
-  useEffect(() => {
-    if (mensajesBackend) {
-      const timer = setTimeout(() => {
-        setMensajesBackend(null);
-      }, 2000);
+  const registrar = async (usuario: RegisterTypeSchema): Promise<void> => {
+    try {
+      const res = await registrarUsuario(usuario);
 
-      return () => clearTimeout(timer);
+      setUsuario(res.data);
+      setIsAutenticado(true);
+      
+      setMensajesBackend(null);
+    } catch (error) {
+      const respuesta = error as AxiosError<RespuestaBackend>;
+      const mensaje = respuesta.response?.data.message || 'Ocurrio un error';
+
+      setMensajesBackend(mensaje);
     }
-  }, [mensajesBackend]);
+  }
 
   return (
     <AuthContext.Provider 
@@ -58,6 +68,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         usuario, 
         mensajesBackend,
         login,
+        registrar,
         isAutenticado
       }}>
       {children}

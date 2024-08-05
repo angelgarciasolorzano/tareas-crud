@@ -1,11 +1,11 @@
 import usuarioModels from "../models/usuario.models";
 
 import { Request, Response } from "express";
-import { usuarioObjetoSchema } from "../schemas/usuario.schemas";
+import { LoginTypeSchema, RegisterTypeSchema } from "../schemas/auth.schemas";
 import { crearAccesoToken } from "../lib/jwt.lib";
 
 export const loginUsuario = async (request: Request, response: Response ) => {
-  const usuarioDatos: usuarioObjetoSchema = request.body;
+  const usuarioDatos: LoginTypeSchema = request.body;
   const { correo_Usuario } = usuarioDatos;
 
   try {
@@ -25,8 +25,8 @@ export const loginUsuario = async (request: Request, response: Response ) => {
 };
 
 export const registrarUsuario = async (request: Request, response: Response ) => {
-  const usuariosDatos: usuarioObjetoSchema = request.body;
-  const { correo_Usuario, contra_Usuario } = usuariosDatos;
+  const usuariosDatos: RegisterTypeSchema = request.body;
+  const { nombre_Usuario, correo_Usuario, contra_Usuario } = usuariosDatos;
 
   try {
     const buscarUsuario = await usuarioModels.findOne({ where: { correo_Usuario } });
@@ -36,6 +36,7 @@ export const registrarUsuario = async (request: Request, response: Response ) =>
     }
 
     const usuarios = await usuarioModels.create({
+      nombre_Usuario,
       correo_Usuario,
       contra_Usuario
     });

@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
+interface datosToken {
+  id_Usuario: number;
+};
+
 dotenv.config();
 const TOKEN_SECRET: string = `${ process.env.TOKEN_SECRET }`;
-
-interface datosToken {
-  id_Usuario: number
-};
 
 export const crearAccesoToken = (datos: datosToken) => {
   return new Promise((resolver, rechazar) => {
