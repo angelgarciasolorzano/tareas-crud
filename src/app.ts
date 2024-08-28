@@ -5,12 +5,13 @@ import morgan from "morgan";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import UsuarioRoutes from "./routes/auth.routes";
+import TareaRoutes from "./routes/tarea.routes";
 import cors from "cors";
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
-
-dotenv.config();
 
 app.use(cors({
   origin: "http://localhost:5173",
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use('/api', UsuarioRoutes);
+app.use('/api', TareaRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en el puerto ${ PORT }`);

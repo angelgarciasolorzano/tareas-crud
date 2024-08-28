@@ -1,8 +1,19 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 import "../App.css";
+import useAuth from "../hooks/useAuth";
 import fondo from "../fondo.jpg";
-import { Link } from "react-router-dom";
 
 function HomePage() {
+  const { autenticado } = useAuth();
+
+  const navegar = useNavigate();
+
+  useEffect(() => {
+    if (autenticado) { navegar("/tareas"); }
+  }, [autenticado]);
+
   return (
     <div className="h-[calc(100vh-68px)] flex justify-center items-center">
       <div className="max-w-sm flex flex-col items-center pt-4 rounded-3xl h-96 shadow-xl bg-white max-sm:w-80">

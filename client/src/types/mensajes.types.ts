@@ -1,3 +1,5 @@
-export interface RespuestaBackend {
+interface RespuestaBackend {
   message: string;
 }
+
+export default RespuestaBackend;

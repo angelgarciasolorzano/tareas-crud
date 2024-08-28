@@ -11,12 +11,14 @@ CREATE TABLE Usuarios (
 
 CREATE TABLE Tarea (
   id_Tarea INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  nombre_Tarea VARCHAR (30) NOT NULL,
+  titulo_Tarea VARCHAR (30) NOT NULL,
   descripcion_Tarea VARCHAR (50) NOT NULL,
   id_Usuario_FK INT NOT NULL,
 
   FOREIGN KEY (id_Usuario_FK) REFERENCES Usuarios (id_Usuario)
 );
+
+ALTER TABLE Tarea CHANGE COLUMN nombre_Tarea titulo_Tarea VARCHAR (50) NOT NULL; 
 
 DESCRIBE Usuario;
 DESCRIBE Tarea;

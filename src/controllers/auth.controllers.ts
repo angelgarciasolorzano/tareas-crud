@@ -1,8 +1,14 @@
 import usuarioModels from "../models/usuario.models";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import DatosUsuario from "../types/datosUsuario";
+import CookieToken from "../types/cookieToken";
 
 import { Request, Response } from "express";
 import { LoginTypeSchema, RegisterTypeSchema } from "../schemas/auth.schemas";
 import { crearAccesoToken } from "../lib/jwt.lib";
+
+dotenv.config();
 
 export const loginUsuario = async (request: Request, response: Response ) => {
   const usuarioDatos: LoginTypeSchema = request.body;
@@ -54,3 +60,34 @@ export const cerrarSesion = (_request: Request, response: Response ) => {
   response.clearCookie("token");
   return response.json({ message: "Sesion Cerrada Correctamente" });
 };
+
+export const verificarToken = async (request: Request, response: Response) => {
+  const { token } = request.cookies as unknown as CookieToken;
+  const TOKEN_SECRET: string = `${ process.env.TOKEN_SECRET }`;
+
+  if (!token) {
+    return response.status(401).json({ message: "No hay Token en la peticion" });
+  }
+
+  jwt.verify(token, TOKEN_SECRET, async (err, decoded) => {
+    const user = decoded as DatosUsuario;
+
+    if (err) {
+      return response.status(403).json({ message: "Token Invalido" });
+    }
+
+    const usuario = await usuarioModels.findByPk(user.id_Usuario);
+
+    if (!usuario) {
+      return response.status(404).json({ message: "Usuario no Encontrado" });
+    }
+
+    return response.json({ 
+      id_Usuario: usuario.dataValues.id_Usuario,
+      nombre_Usuario: usuario.dataValues.nombre_Usuario,
+      correo_Usuario: usuario.dataValues.correo_Usuario,
+    });
+  });
+
+  return;
+}
