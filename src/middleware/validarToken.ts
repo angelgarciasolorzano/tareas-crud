@@ -19,7 +19,6 @@ const authRequerida = (request: Requests, response: Response, next: NextFunction
 
   jwt.verify(token, TOKEN_SECRET, (err, user) => {
     const datos = user as DatosUsuario;
-    console.log(datos);
 
     if (err) { return response.status(403).json({ message: "Token Invalido" }); }
 

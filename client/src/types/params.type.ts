@@ -1,5 +1,5 @@
 interface IdParams {
-  id: number;
+  id: string;
 }
 
 export default IdParams;

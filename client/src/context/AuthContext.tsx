@@ -36,6 +36,7 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
     try {
       const res = await loginUsuario(usuario);
 
+      localStorage.setItem('usuario', JSON.stringify(res.data));
       setUsuario(res.data);
       setAutenticado(true);
       
@@ -52,6 +53,7 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
     try {
       const res = await registrarUsuario(usuario);
 
+      localStorage.setItem('usuario', JSON.stringify(res.data));
       setUsuario(res.data);
       setAutenticado(true);
       
@@ -70,6 +72,7 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
 
   const cerrarSesion = () => {
     Cookie.remove("token");
+    localStorage.removeItem('usuario');
     setAutenticado(false);
     setUsuario(null);
     actualizarLoadingNav(false);
@@ -79,6 +82,15 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
   useEffect(() => {
     async function checkLogin() {
       const cookie = Cookie.get() as unknown as CookieToken;
+      const localUsuario = localStorage.getItem('usuario');
+
+      if (localUsuario && cookie.token) {
+        setUsuario(JSON.parse(localUsuario));
+        setAutenticado(true);
+        setLoading(false);
+        actualizarLoadingNav(true);
+        return;
+      }
 
       if (!cookie.token) {
         setAutenticado(false);
@@ -97,6 +109,7 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
           return;
         }
 
+        localStorage.setItem('usuario', JSON.stringify(respuesta.data));
         setUsuario(respuesta.data);
         setAutenticado(true);
         setLoading(false);

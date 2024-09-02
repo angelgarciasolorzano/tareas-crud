@@ -22,37 +22,8 @@ function TareaRegisterPage() {
   });
 
   const navegar = useNavigate();
-  const params = useParams() as unknown as IdParams;
-  const buttonText = params.id ? "Actualizar" : "Guardar";
-
-  useEffect(() => {
-    async function cargarTarea() {
-      if (params.id) {
-        const respuesta = await getTarea(params.id) as unknown as TareasTypeSchema;
-        setValue("titulo_Tarea", respuesta.titulo_Tarea);
-        setValue("descripcion_Tarea", respuesta.descripcion_Tarea);
-      }
-    }
-    cargarTarea();
-  }, []);
-
-  const onSubmit = handleSubmit(async (values: TareasTypeSchema) => {
-    if (params.id) {
-      try {
-        setLoading(true);
-        await editarTarea(params.id, values);
-      } finally {
-        setMensaje(true);
-      }
-    } else {
-      try {
-        setLoading(true);
-        await agregarTarea(values);
-      } finally {
-        setMensaje(true);
-      }
-    }
-  });
+  const { id } = useParams() as unknown as IdParams;
+  const buttonText = id ? "Actualizar" : "Guardar";
 
   useEffect(() => {
     if (mensaje) {
@@ -75,7 +46,34 @@ function TareaRegisterPage() {
 
       return () => clearTimeout(timer);
     }
+
+    async function cargarTarea() {
+      if (id) {
+        const respuesta = await getTarea(id) as unknown as TareasTypeSchema;
+        setValue("titulo_Tarea", respuesta.titulo_Tarea);
+        setValue("descripcion_Tarea", respuesta.descripcion_Tarea);
+      }
+    }
+    cargarTarea();
   }, [mensaje]);
+
+  const onSubmit = handleSubmit(async (values: TareasTypeSchema) => {
+    if (id) {
+      try {
+        setLoading(true);
+        await editarTarea(id, values);
+      } finally {
+        setMensaje(true);
+      }
+    } else {
+      try {
+        setLoading(true);
+        await agregarTarea(values);
+      } finally {
+        setMensaje(true);
+      }
+    }
+  });
 
   return (
     <div className="flex min-h-[calc(100vh-80px)] items-center justify-center">
@@ -85,7 +83,7 @@ function TareaRegisterPage() {
           <div className="card-body">
             <img src={ reactLogo } alt="Logo" className="h-10" />
             <h2 className="card-title justify-center">
-              { params.id ? "Actualizar Tarea" : "Agregar Tarea" }
+              { id ? "Actualizar Tarea" : "Agregar Tarea" }
             </h2>
 
             <div className="mt-2">
