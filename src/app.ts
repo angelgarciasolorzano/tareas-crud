@@ -12,9 +12,10 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+const PORT_CLIENT = process.env.PORT_CLIENT;
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: `${ PORT_CLIENT }`,
   credentials: true,
 }));
 app.use(morgan("dev"));
