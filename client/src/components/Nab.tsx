@@ -37,7 +37,7 @@ function Nab() {
         <ul className="flex px-2 flex-wrap gap-4 [&_li]:flex-grow [&_li]:text-white max-sm:flex-col">
           { autenticado && loadingNav ? (
             <>
-              <motion.li
+              <motion.h1
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ 
@@ -46,9 +46,10 @@ function Nab() {
                   delay: 0.2,
                   type: "spring"
                 }}
+                className="text-white"
               >
                 Bienvenido: { usuario?.nombre_Usuario }
-              </motion.li>
+              </motion.h1>
               <motion.li 
                 whileTap={{ scale: 0.8 }}
                 className="font-semibold"

@@ -6,7 +6,7 @@ CREATE TABLE Usuarios (
   id_Usuario INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   nombre_Usuario VARCHAR (30) NOT NULL,
   correo_Usuario VARCHAR (30) NOT NULL,
-  contra_Usuario VARCHAR (10) NOT NULL
+  contra_Usuario VARCHAR (70) NOT NULL
 );
 
 CREATE TABLE Tarea (

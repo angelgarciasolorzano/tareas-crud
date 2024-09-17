@@ -1,6 +1,7 @@
 import usuarioModels from "../models/usuario.models";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 import DatosUsuario from "../types/datosUsuario";
 import CookieToken from "../types/cookieToken";
 
@@ -12,13 +13,19 @@ dotenv.config();
 
 export const loginUsuario = async (request: Request, response: Response ) => {
   const usuarioDatos: LoginTypeSchema = request.body;
-  const { correo_Usuario } = usuarioDatos;
+  const { correo_Usuario, contra_Usuario } = usuarioDatos;
 
   try {
     const usuario = await usuarioModels.findOne({ where: { correo_Usuario } });
 
     if (!usuario) {
       return response.status(404).json({ message: "El Usuario No Existe" });
+    }
+
+    const password = await bcrypt.compare(contra_Usuario, usuario.dataValues.contra_Usuario);
+
+    if (!password) {
+      return response.status(401).json({ message: "Contraseña Incorrecta" });
     }
 
     const token = await crearAccesoToken({ id_Usuario: usuario.dataValues.id_Usuario });
@@ -41,10 +48,12 @@ export const registrarUsuario = async (request: Request, response: Response ) =>
       return response.status(409).json({ message: "El usuario ya Existe" });
     }
 
+    const password = await bcrypt.hash(contra_Usuario, 10);
+
     const usuarios = await usuarioModels.create({
       nombre_Usuario,
       correo_Usuario,
-      contra_Usuario
+      contra_Usuario: password
     });
 
     const token = await crearAccesoToken({ id_Usuario: usuarios.dataValues.id_Usuario });
