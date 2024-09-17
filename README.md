@@ -1,6 +1,6 @@
 #Tareas-CRUD
 
-![Imagen-logo](IMG-README.jpg)
+<img src="IMG-README.jpg" alt="Imagen-logo" height="300">
 
 <p>
 Primer proyecto elaborado con Typescript, cuenta con login y registro, los usuarios pueden guardar sus propias tareas y estas seran guardadas en una base de datos, algunas de las tecnologias usadas son:
