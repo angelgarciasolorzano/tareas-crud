@@ -10,7 +10,7 @@ import { crearAccesoToken } from "../lib/jwt.lib";
 
 dotenv.config();
 
-export const loginUsuario = async (request: Request, response: Response ) => {
+export const loginUsuario = async (request: Request, response: Response): Promise<Response> => {
   const usuarioDatos: LoginTypeSchema = request.body;
   const { correo_Usuario, contra_Usuario } = usuarioDatos;
 
@@ -36,7 +36,7 @@ export const loginUsuario = async (request: Request, response: Response ) => {
   }
 };
 
-export const registrarUsuario = async (request: Request, response: Response ) => {
+export const registrarUsuario = async (request: Request, response: Response): Promise<Response> => {
   const usuariosDatos: RegisterTypeSchema = request.body;
   const { nombre_Usuario, correo_Usuario, contra_Usuario } = usuariosDatos;
 
@@ -64,12 +64,12 @@ export const registrarUsuario = async (request: Request, response: Response ) =>
   }
 };
 
-export const cerrarSesion = (_request: Request, response: Response ) => {
+export const cerrarSesion = (_request: Request, response: Response): Response => {
   response.clearCookie("token");
   return response.json({ message: "Sesion Cerrada Correctamente" });
 };
 
-export const verificarToken = async (request: Request, response: Response) => {
+export const verificarToken = async (request: Request, response: Response): Promise<Response | undefined> => {
   const token: string = request.cookies["token"];
   const TOKEN_SECRET: string = `${ process.env.TOKEN_SECRET }`;
 

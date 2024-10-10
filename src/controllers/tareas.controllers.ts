@@ -4,7 +4,7 @@ import { TareaTypeSchema } from "../schemas/tarea.shemas";
 
 import Requests from "../types/requestUser";
 
-export const getTareas = async (request: Requests, response: Response) => {
+export const getTareas = async (request: Requests, response: Response): Promise<Response> => {
   const Datos = request as Requests;
 
   try {
@@ -17,7 +17,7 @@ export const getTareas = async (request: Requests, response: Response) => {
   }
 };
 
-export const agregarTarea = async (request: Requests, response: Response) => {
+export const agregarTarea = async (request: Requests, response: Response): Promise<Response> => {
   const tareas: TareaTypeSchema = request.body;
   const { descripcion_Tarea, titulo_Tarea } = tareas;
 
@@ -35,7 +35,7 @@ export const agregarTarea = async (request: Requests, response: Response) => {
   }
 };
 
-export const getTarea = async (request: Requests, response: Response) => {
+export const getTarea = async (request: Requests, response: Response): Promise<Response> => {
   const { id } = request.params;
 
   try {
@@ -51,7 +51,7 @@ export const getTarea = async (request: Requests, response: Response) => {
   }
 };
 
-export const actualizarTarea = async (request: Requests, response: Response) => {
+export const actualizarTarea = async (request: Requests, response: Response): Promise<Response> => {
   const tareas: TareaTypeSchema = request.body;
   const { id } = request.params;
   const { descripcion_Tarea, titulo_Tarea } = tareas;
@@ -74,7 +74,7 @@ export const actualizarTarea = async (request: Requests, response: Response) => 
   }
 };
 
-export const eliminarTarea = async (request: Requests, response: Response) => {
+export const eliminarTarea = async (request: Requests, response: Response): Promise<Response> => {
   const { id } = request.params;
 
   try {
