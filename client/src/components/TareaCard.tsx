@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-import useTareas from "../hooks/useTareas";
 import Tarea from "../types/tareas.types";
+import useAccion from "../hooks/useAccion";
 
 interface TareaCardProps {
   tarea: Tarea;
@@ -10,9 +10,8 @@ interface TareaCardProps {
 };
 
 function TareaCard({ tarea, index }: TareaCardProps) {
-  const { borrarTareas } = useTareas();
+  const { borrarTareas } = useAccion();
   const { id_Tarea, descripcion_Tarea, titulo_Tarea } = tarea;
-  const id: string = `${id_Tarea}`;
 
   const variables = {
     hidden: {
@@ -26,7 +25,7 @@ function TareaCard({ tarea, index }: TareaCardProps) {
       }
     })
   };
-  
+
   return (
     <motion.div
       custom={{ delay: (index + 1) * 0.2 }}
@@ -34,7 +33,7 @@ function TareaCard({ tarea, index }: TareaCardProps) {
       animate="visible"
       exit="hidden"
       variants={variables}
-      layoutId={id}
+      layoutId={`${id_Tarea}`}
     >
       <div className="m-2">
         <div className="card card-compact max-sm:container md:container bg-base-100 w-96 shadow-xl">

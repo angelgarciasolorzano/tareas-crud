@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import DatosUsuario from "../types/datosUsuario";
-import CookieToken from "../types/cookieToken";
 
 import { Request, Response } from "express";
 import { LoginTypeSchema, RegisterTypeSchema } from "../schemas/auth.schemas";
@@ -71,7 +70,7 @@ export const cerrarSesion = (_request: Request, response: Response ) => {
 };
 
 export const verificarToken = async (request: Request, response: Response) => {
-  const { token } = request.cookies as unknown as CookieToken;
+  const token: string = request.cookies["token"];
   const TOKEN_SECRET: string = `${ process.env.TOKEN_SECRET }`;
 
   if (!token) {

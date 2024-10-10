@@ -7,12 +7,11 @@ import useAuth from "../hooks/useAuth";
 import fondo from "../fondo.jpg";
 
 function HomePage() {
+  const navegar = useNavigate();
   const { autenticado } = useAuth();
 
-  const navegar = useNavigate();
-
   useEffect(() => {
-    if (autenticado) { navegar("/tareas"); }
+    if (autenticado) navegar("/tareas"); 
   }, [autenticado]);
 
   return (

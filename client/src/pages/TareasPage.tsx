@@ -1,41 +1,18 @@
-import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 import useTareas from "../hooks/useTareas";
 import TareaCard from "../components/TareaCard";
+import useAccion from "../hooks/useAccion";
 
 function TareasPage() {
-  const { 
-    tareas, getTareas,
-    mensajeSuccess, setMensajeSuccess, mensajeBackend, setMensajeBackend 
-  } = useTareas();
-  const [ loading, setLoading ] = useState<boolean>(true);
+  const { tareas } = useTareas();
+  const { loading, getTareas } = useAccion(true);
 
   useEffect(() => {
-    const tareas = async () => {
-      try {
-        await getTareas();
-      } finally {
-        const timer = setTimeout(() => {
-          setLoading(false);
-        }, 1000);
-        return () => clearTimeout(timer);
-      }
-    }
-    tareas();
-
-    if (mensajeSuccess) {
-      toast.success(mensajeSuccess);
-      setMensajeSuccess(null);
-    }
-
-    if (mensajeBackend) {
-      toast.error(mensajeBackend);
-      setMensajeBackend(null);
-    }
-  }, [mensajeSuccess, mensajeBackend]);
+    getTareas();
+  }, []); 
 
   return (
     <>

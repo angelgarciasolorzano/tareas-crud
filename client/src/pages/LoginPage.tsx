@@ -4,59 +4,28 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginTypeSchema, LoginFormSchema } from "../schemas/authSchema";
-import { toast } from "react-hot-toast";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import useAuth from "../hooks/useAuth";
 import reactLogo from "../assets/react.svg";
+import useAccion from "../hooks/useAccion";
+import { useEffect } from "react";
+import useAuth from "../hooks/useAuth";
 
 function LoginPage() {
-  const [ loading, setLoading ] = useState<boolean>(false);
-  const [ mensaje, setMensaje ] = useState<boolean>(false);
-  const { 
-    login, autenticado, mensajesBackend, usuario, 
-    setMensajesBackend, actualizarLoadingNav 
-  } = useAuth();
+  const navegar = useNavigate();
+  const { loading, login } = useAccion();
+  const { autenticado } = useAuth();
   const { register, handleSubmit, formState: { errors } } = useForm<LoginTypeSchema>({
     resolver: zodResolver(LoginFormSchema),
   });
 
-  const navegar = useNavigate();
-
   const onSubmit = handleSubmit(async (values: LoginTypeSchema) => {
-    try {
-      setLoading(true);
-      await login(values);
-    } finally {
-      setMensaje(true);
-    }
+    await login(values);
   });
 
   useEffect(() => {
-    if (autenticado && mensaje || !autenticado && mensaje) {
-      const timer = setTimeout(() => {
-        setLoading(false);
-
-        if (mensajesBackend) { 
-          toast.error(mensajesBackend);
-          setMensajesBackend(null); 
-        }
-      
-        if (autenticado) {
-          actualizarLoadingNav(true);
-          navegar("/tareas"); 
-          toast.success(`Bienvenido ${usuario?.correo_Usuario}`); 
-        }
-
-        setMensaje(false);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-
-    if (autenticado) { actualizarLoadingNav(true); navegar("/tareas"); }
-  }, [autenticado, mensaje]);
+    if (autenticado) navegar("/tareas");
+  }, [autenticado])
 
   return (
     <motion.div 

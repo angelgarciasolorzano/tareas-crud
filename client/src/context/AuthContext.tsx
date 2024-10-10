@@ -1,25 +1,18 @@
 import { createContext, useState, FC, useEffect, useCallback } from "react";
-import { loginUsuario, registrarUsuario, verificarToken } from "../api/auth.api";
-import { LoginTypeSchema, RegisterTypeSchema } from "../schemas/authSchema";
-import { AxiosError } from "axios";
-import { toast } from "react-hot-toast";
+import { verificarToken } from "../api/auth.api";
 
 import Cookie from "js-cookie";
-import CookieToken from "../types/cookie.types";
 import ProviderProps from "../types/props.types";
 import Usuario from "../types/usuario.types";
-import RespuestaBackend from "../types/mensajes.types";
 
 export interface AuthContextProps {
-  login: (usuario: LoginTypeSchema) => Promise<void>;
-  registrar: (usuario: RegisterTypeSchema) => Promise<void>;
-  cerrarSesion: () => void;
   usuario: Usuario | null;
   autenticado: boolean;
-  mensajesBackend: string | null;
-  setMensajesBackend: (mensajes: string | null) => void;
   loading: boolean;
   loadingNav: boolean;
+  setUsuario: (usuario: Usuario | null) => void;
+  setAutenticado: (autenticado: boolean) => void;
+  setLoading: (loading: boolean) => void;
   actualizarLoadingNav: (loading: boolean) => void;
 };
 
@@ -28,99 +21,56 @@ export const AuthContext = createContext<AuthContextProps | null>(null);
 export const AuthProvider: FC<ProviderProps> = ({ children }) => {
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [autenticado, setAutenticado] = useState<boolean>(false);
-  const [mensajesBackend, setMensajesBackend] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingNav, setLoadingNav] = useState<boolean>(false);
-
-  const login = async (usuario: LoginTypeSchema): Promise<void> => {
-    try {
-      const res = await loginUsuario(usuario);
-
-      localStorage.setItem('usuario', JSON.stringify(res.data));
-      setUsuario(res.data);
-      setAutenticado(true);
-      
-      setMensajesBackend(null);
-    } catch (error) {
-      const respuesta = error as AxiosError<RespuestaBackend>;
-      const mensaje = respuesta.response?.data.message || 'Ocurrio un error';
-
-      setMensajesBackend(mensaje);
-    }
-  };
-
-  const registrar = async (usuario: RegisterTypeSchema): Promise<void> => {
-    try {
-      const res = await registrarUsuario(usuario);
-
-      localStorage.setItem('usuario', JSON.stringify(res.data));
-      setUsuario(res.data);
-      setAutenticado(true);
-      
-      setMensajesBackend(null);
-    } catch (error) {
-      const respuesta = error as AxiosError<RespuestaBackend>;
-      const mensaje = respuesta.response?.data.message || 'Ocurrio un error';
-
-      setMensajesBackend(mensaje);
-    }
-  };
 
   const actualizarLoadingNav = useCallback((loading: boolean) => {
     setLoadingNav(loading);
   }, []);
 
-  const cerrarSesion = () => {
-    Cookie.remove("token");
-    localStorage.removeItem('usuario');
-    setAutenticado(false);
-    setUsuario(null);
-    actualizarLoadingNav(false);
-    toast.success("Sesion cerrada");
-  };
+  const checkLogin = async () => {
+    const token = Cookie.get('token');
+    const localUsuario = localStorage.getItem('usuario');
 
-  useEffect(() => {
-    async function checkLogin() {
-      const cookie = Cookie.get() as unknown as CookieToken;
-      const localUsuario = localStorage.getItem('usuario');
+    if (localUsuario && token) {
+      setUsuario(JSON.parse(localUsuario));
+      setAutenticado(true);
+      setLoading(false);
+      actualizarLoadingNav(true);
+      return;
+    }
 
-      if (localUsuario && cookie.token) {
-        setUsuario(JSON.parse(localUsuario));
-        setAutenticado(true);
+    if (!token) {
+      setAutenticado(false);
+      setLoading(false);
+      actualizarLoadingNav(false);
+      return setUsuario(null);
+    }
+
+    try {
+      const respuesta = await verificarToken();
+
+      if (!respuesta) {
+        setAutenticado(false);
         setLoading(false);
-        actualizarLoadingNav(true);
+        actualizarLoadingNav(false);
         return;
       }
 
-      if (!cookie.token) {
-        setAutenticado(false);
-        setLoading(false);
-        actualizarLoadingNav(false);
-        return setUsuario(null);
-      }
-
-      try {
-        const respuesta = await verificarToken();
-
-        if (!respuesta.data) {
-          setAutenticado(false);
-          setLoading(false);
-          actualizarLoadingNav(false);
-          return;
-        }
-
-        localStorage.setItem('usuario', JSON.stringify(respuesta.data));
-        setUsuario(respuesta.data);
-        setAutenticado(true);
-        setLoading(false);
-        actualizarLoadingNav(true);
-      } catch (error) {
-        setAutenticado(false);
-        setUsuario(null);
-        setLoading(false);
-        actualizarLoadingNav(false);
-      }
+      localStorage.setItem('usuario', JSON.stringify(respuesta));
+      setUsuario(respuesta);
+      setAutenticado(true);
+      setLoading(false);
+      actualizarLoadingNav(true);
+    } catch (error) {
+      setAutenticado(false);
+      setUsuario(null);
+      setLoading(false);
+      actualizarLoadingNav(false);
     }
+  };
+
+  useEffect(() => {
     checkLogin();
   }, []);
 
@@ -128,14 +78,12 @@ export const AuthProvider: FC<ProviderProps> = ({ children }) => {
     <AuthContext.Provider 
       value={{ 
         usuario, 
-        mensajesBackend,
-        setMensajesBackend,
-        login,
-        registrar,
-        cerrarSesion,
         autenticado,
         loading,
         loadingNav,
+        setUsuario,
+        setAutenticado,
+        setLoading,
         actualizarLoadingNav
       }}>
       {children}

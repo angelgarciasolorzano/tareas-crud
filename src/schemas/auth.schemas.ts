@@ -1,5 +1,4 @@
 import {object, string, InferType, ObjectSchema } from "yup";
-import { verificarEmail } from "../validation/login.validation";
 import { validarContraExpression } from "../lib/expresionRegular.lib";
 
 export type SchemaType<T extends object> = ObjectSchema<T>;
@@ -21,14 +20,7 @@ export const RegisterSchema = object({
     .email("El correo no es valido")
     .min(10, "El correo debe tener al menos 10 caracteres")
     .max(30, "El correo debe tener como maximo 30 caracteres")
-    .required("El correo es requerido")
-    .test("correo-existe", "Este correo ya esta registrado", async (correo: string) => {
-      if (correo) {
-        const respuesta = await verificarEmail(correo);
-        return respuesta === false ? false : !respuesta;
-      }
-      return false;
-    }),
+    .required("El correo es requerido"),
   contra_Usuario: string()
     .min(6, "La contraseña debe tener como minimo 6 caracteres")
     .max(10, "La contraseña debe tener como minimo 10 caracteres")

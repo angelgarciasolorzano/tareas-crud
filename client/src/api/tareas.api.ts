@@ -1,11 +1,28 @@
 import axios from "./axios";
+import Tarea from "../types/tareas.types";
+import { TareasTypeSchema } from "../schemas/tareaSchema";
+import RespuestaBackend from "../types/mensajes.types";
 
-export const getTareasRequest = () => { return axios.get("/tareas"); }
+export const getTareasRequest = async (): Promise<Tarea[]> => { 
+  const { data } = await axios.get<Tarea[]>("/tareas");
+  return data;
+};
 
-export const getTareaRequest = (id_Tarea: number) => { return axios.get(`/tareas/${id_Tarea}`); }
+export const getTareaRequest = async (id_Tarea: string): Promise<TareasTypeSchema> => { 
+  const { data } = await axios.get<TareasTypeSchema>(`/tareas/${id_Tarea}`); 
+  return data;
+};
 
-export const agregarTareaRequest = (tarea: any) => { return axios.post("/tareas", tarea); }
+export const agregarTareaRequest = (tarea: TareasTypeSchema): Promise<void> => { 
+  return axios.post("/tareas", tarea); 
+};
 
-export const actualizarTareaRequest = (id_Tarea: number, tarea: any) => { return axios.put(`/tareas/${id_Tarea}`, tarea); }
+export const actualizarTareaRequest = async (id_Tarea: string, tarea: TareasTypeSchema): Promise<RespuestaBackend> => { 
+  const { data } = await axios.put<RespuestaBackend>(`/tareas/${id_Tarea}`, tarea);
+  return data; 
+};
 
-export const eliminarTareaRequest = (id_Tarea: number) => { return axios.delete(`/tareas/${id_Tarea}`); }
+export const eliminarTareaRequest = async (id_Tarea: number): Promise<RespuestaBackend> => { 
+  const { data } = await axios.delete<RespuestaBackend>(`/tareas/${id_Tarea}`);
+  return data; 
+};

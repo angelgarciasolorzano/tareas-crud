@@ -4,18 +4,21 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 import useAuth from "../hooks/useAuth";
+import useAccion from "../hooks/useAccion";
 
 function Nab() {
   const [ loading, setLoading ] = useState<boolean>(false);
-  const { autenticado, usuario, cerrarSesion, loadingNav } = useAuth();
+  const { autenticado, usuario, loadingNav } = useAuth();
+  const { cerrarSesion } = useAccion();
+
   const navegar = useNavigate();
 
   const handleClick = () => {
     setLoading(true);
     const timer = setTimeout(() => {
       cerrarSesion();
-      setLoading(false);
-      navegar('/login'); 
+      navegar('/login');
+      setLoading(false); 
     }, 3000);
 
     return () => clearTimeout(timer);

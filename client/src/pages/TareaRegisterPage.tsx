@@ -1,80 +1,44 @@
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 import { TareasTypeSchema, TareasFormSchema } from "../schemas/tareaSchema";
 import { toast } from "react-hot-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MdSubtitles } from "react-icons/md";
 import { motion } from "framer-motion";
+import { getTareaRequest } from "../api/tareas.api";
 
-import useTareas from "../hooks/useTareas";
 import reactLogo from "../assets/react.svg";
 import IdParams from "../types/params.type";
+import useAccion from "../hooks/useAccion";
 
 function TareaRegisterPage() {
-  const [ loading, setLoading ] = useState<boolean>(false);
-  const [ mensaje, setMensaje ] = useState<boolean>(false);
-  const { 
-    agregarTarea, getTarea, editarTarea, 
-    mensajeBackend, setMensajeBackend, mensajeSuccess, setMensajeSuccess 
-  } = useTareas();
+  const { id } = useParams<IdParams>();
+  const { loading, agregarTarea, editarTarea } = useAccion();
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<TareasTypeSchema>({
     resolver: zodResolver(TareasFormSchema),
   });
-
-  const navegar = useNavigate();
-  const { id } = useParams() as unknown as IdParams;
   const buttonText = id ? "Actualizar" : "Guardar";
 
-  useEffect(() => {
-    if (mensaje) {
-      const timer = setTimeout(() => {
-        setLoading(false);
-
-        if (mensajeBackend) { 
-          toast.error(mensajeBackend);
-          setMensajeBackend(null); 
-        }
-
-        if (mensajeSuccess) {
-          navegar("/tareas");
-          toast.success(mensajeSuccess);
-          setMensajeSuccess(null);
-        }
-
-        setMensaje(false);
-      }, 2000);
-
-      return () => clearTimeout(timer);
-    }
-
-    async function cargarTarea() {
-      if (id) {
-        const respuesta = await getTarea(id) as unknown as TareasTypeSchema;
-        setValue("titulo_Tarea", respuesta.titulo_Tarea);
-        setValue("descripcion_Tarea", respuesta.descripcion_Tarea);
-      }
-    }
-    cargarTarea();
-  }, [mensaje]);
-
-  const onSubmit = handleSubmit(async (values: TareasTypeSchema) => {
+  const cargarTarea = async (): Promise<void> => {
     if (id) {
       try {
-        setLoading(true);
-        await editarTarea(id, values);
-      } finally {
-        setMensaje(true);
-      }
-    } else {
-      try {
-        setLoading(true);
-        await agregarTarea(values);
-      } finally {
-        setMensaje(true);
-      }
+        const { titulo_Tarea, descripcion_Tarea } = await getTareaRequest(id);
+        setValue("titulo_Tarea", titulo_Tarea);
+        setValue("descripcion_Tarea", descripcion_Tarea);
+      } catch (error) {
+        toast.error("Hubo un error al obtener la tarea");
+      } 
     }
+  };
+
+  const onSubmit = handleSubmit(async (values: TareasTypeSchema): Promise<void> => { 
+    return id ? await editarTarea(id, values) : await agregarTarea(values);
   });
+
+  useEffect(() => {
+    cargarTarea();
+  }, []);
 
   return (
     <motion.div

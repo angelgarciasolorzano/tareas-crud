@@ -1,4 +1,4 @@
-interface IdParams {
+type IdParams = {
   id: string;
 }
 
