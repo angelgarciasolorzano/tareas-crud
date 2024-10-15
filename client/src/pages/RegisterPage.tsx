@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
+import { useDocumentTitle } from "@uidotdev/usehooks";
 
 import reactLogo from "../assets/react.svg";
 import useAccion from "../hooks/useAccion";
@@ -19,6 +20,8 @@ function RegisterPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<RegisterTypeSchema>({
     resolver: zodResolver(RegisterFormSchema),
   });
+
+  useDocumentTitle("Tareas CRUD - Register");
 
   const onSubmit = handleSubmit(async (values: RegisterTypeSchema) => {
     await registrar(values);

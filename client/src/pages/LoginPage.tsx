@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginTypeSchema, LoginFormSchema } from "../schemas/authSchema";
 import { motion } from "framer-motion";
+import { useDocumentTitle } from "@uidotdev/usehooks";
 
 import reactLogo from "../assets/react.svg";
 import useAccion from "../hooks/useAccion";
@@ -18,6 +19,8 @@ function LoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<LoginTypeSchema>({
     resolver: zodResolver(LoginFormSchema),
   });
+
+  useDocumentTitle("Tareas CRUD - Login");
 
   const onSubmit = handleSubmit(async (values: LoginTypeSchema) => {
     await login(values);

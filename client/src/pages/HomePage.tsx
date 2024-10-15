@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useDocumentTitle } from "@uidotdev/usehooks";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -9,6 +10,8 @@ import fondo from "../fondo.jpg";
 function HomePage() {
   const navegar = useNavigate();
   const { autenticado } = useAuth();
+
+  useDocumentTitle("Tareas CRUD - Home");
 
   useEffect(() => {
     if (autenticado) navegar("/tareas"); 

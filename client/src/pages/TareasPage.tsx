@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import { useDocumentTitle } from "@uidotdev/usehooks";
 
 import useTareas from "../hooks/useTareas";
 import TareaCard from "../components/TareaCard";
@@ -9,6 +10,8 @@ import useAccion from "../hooks/useAccion";
 function TareasPage() {
   const { tareas } = useTareas();
   const { loading, getTareas } = useAccion(true);
+
+  useDocumentTitle("Tareas CRUD - Tareas");
 
   useEffect(() => {
     getTareas();

@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MdSubtitles } from "react-icons/md";
 import { motion } from "framer-motion";
 import { getTareaRequest } from "../api/tareas.api";
+import { useDocumentTitle } from "@uidotdev/usehooks";
 
 import reactLogo from "../assets/react.svg";
 import IdParams from "../types/params.type";
@@ -19,6 +20,8 @@ function TareaRegisterPage() {
     resolver: zodResolver(TareasFormSchema),
   });
   const buttonText = id ? "Actualizar" : "Guardar";
+
+  useDocumentTitle(id ? "Tareas CRUD - Actualizar" : "Tareas CRUD - Agregar");
 
   const cargarTarea = async (): Promise<void> => {
     if (id) {

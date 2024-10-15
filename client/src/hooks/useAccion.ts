@@ -78,7 +78,6 @@ const useAccion = (estado: boolean = false) => {
     setAutenticado(false);
     setUsuario(null);
     actualizarLoadingNav(false);
-    toast.success("Sesion cerrada");
   };
 
   const getTareas = async (): Promise<void> => {
